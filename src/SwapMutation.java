@@ -46,8 +46,6 @@ class SwapMutation implements MutationStrategy{
     }
 
     private boolean mutation() {
-        Random random = new Random();
-
         int randomNumber = random.nextInt(100);
         return randomNumber < percentMutation;
 
