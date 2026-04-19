@@ -1,59 +1,48 @@
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 class SimpleCrossover implements CrossingParentsStrategy{
-
+    private final Random random = new Random();
     @Override
-    public int[] returnCrossingParents(int[] firstParent, int[] secondParent) {
-        int lengthBreakPoint = 2;
+    public int[] returnCrossingParents(int[] parent1, int[] parent2) {
+        int breakPoint = 2;
+        int[] child = new int[parent1.length];
 
-        int[] firstChild = new int[firstParent.length];
-
-        Set<Integer> fromParentToChildDoNotCopy = new HashSet<>();
+        Set<Integer> set = new HashSet<>();
 
         int i = 0;
-        int firstParentLength = firstParent.length;
+        int lenParent1 = parent1.length;
 
-        while (i < firstParentLength) {
+        int currentPoint = breakPoint;
+        while (i < lenParent1) {
 
-            if (i < lengthBreakPoint) {
-                firstChild[i] = firstParent[i];
-                fromParentToChildDoNotCopy.add(firstParent[i]);
+            if (i < breakPoint) {
+                child[i] = parent1[i];
+                set.add(parent1[i]);
             }
 
-            if (i >= lengthBreakPoint) {
-                if (fromParentToChildDoNotCopy.contains(secondParent[i])) {
-                    int j = i + 1;
-                    boolean validNext = true;
-                    while (j < firstParentLength && validNext) {
-
-                        if (!fromParentToChildDoNotCopy.contains(secondParent[j])) {
-                            firstChild[i] = secondParent[j];
-                            validNext = false;
-                            fromParentToChildDoNotCopy.add(secondParent[j]);
-                        }
-
-                        j++;
-                    }
-                } else {
-                    firstChild[i] = secondParent[i];
-                    fromParentToChildDoNotCopy.add(secondParent[i]);
+            if (i >= breakPoint) {
+                if (!set.contains(parent2[i])) {
+                    child[currentPoint] = parent2[i];
+                    set.add(parent2[i]);
+                    currentPoint++;
                 }
             }
 
             i++;
         }
 
-        int firstChildLength = firstChild.length - 1;
-        int indexBeforeBreakPoint = lengthBreakPoint - 1;
-        while (indexBeforeBreakPoint > 0) {
-            if (!(fromParentToChildDoNotCopy.contains(secondParent[indexBeforeBreakPoint]))) {
-                int freeGen = secondParent[indexBeforeBreakPoint];
-                firstChild[firstChildLength--] = freeGen;
+        int currentIndex = breakPoint;
+        while (currentIndex < parent1.length){
+            if (!(set.contains(parent1[currentIndex]))) {
+                int freeGen = parent1[currentIndex];
+                child[currentPoint++] = freeGen;
+                set.add(freeGen);
             }
-            indexBeforeBreakPoint--;
+            currentIndex++;
         }
 
-        return firstChild;
+        return child;
     }
 }
